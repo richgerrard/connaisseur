@@ -10,6 +10,15 @@ on:
       - develop
 
 jobs:
+  build-ghcr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and Push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: user/app:v1
+          file: docker/Dockerfile
   build:
     runs-on: ubuntu-latest
     steps:
