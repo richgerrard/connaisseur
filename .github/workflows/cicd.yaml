@@ -19,6 +19,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
+          registry: ghcr.io
           tags: sse-secure-systems/connaisseur:test
           file: docker/Dockerfile
           build-args: COSIGN_VERSION=1.7.1
