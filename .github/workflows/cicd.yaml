@@ -19,8 +19,7 @@ jobs:
           push: true
           tags: user/app:v1
           file: docker/Dockerfile
-          build-args:
-            COSIGN_VERSION: 1.7.1
+          build-args: COSIGN_VERSION=1.7.1
   build:
     runs-on: ubuntu-latest
     steps:
