@@ -39,6 +39,7 @@ static_cosigns = [
             },
         ],
         "auth": {"k8s_keychain": True},
+        "host": "https://rekor.instance.com",
     },
     {
         "name": "cosign1",
@@ -48,12 +49,14 @@ static_cosigns = [
             {"name": "test", "key": "..."},
         ],
         "auth": {"k8s_keychain": False},
+        "host": "http://foo.bar",
     },
     {
         "name": "cosign1",
         "type": "cosign",
         "trust_roots": [],
         "auth": {"secret_name": "my-secret"},
+        "host": "rekor.tlog.xyz",
     },
     {
         "name": "cosign1",
@@ -141,13 +144,20 @@ def mock_add_kill_fake_process(monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "index, kchain", [(0, False), (1, True), (2, False), (3, False)]
+    "index, kchain, host",
+    [
+        (0, False, None),
+        (1, True, "https://rekor.instance.com"),
+        (2, False, "http://foo.bar"),
+        (3, False, "https://rekor.tlog.xyz"),
+    ],
 )
-def test_init(index: int, kchain: bool):
+def test_init(index: int, kchain: bool, host: str):
     val = co.CosignValidator(**static_cosigns[index])
     assert val.name == static_cosigns[index]["name"]
     assert val.trust_roots == static_cosigns[index]["trust_roots"]
     assert val.k8s_keychain == kchain
+    assert val.rekor_url == host
 
 
 @pytest.mark.parametrize(
