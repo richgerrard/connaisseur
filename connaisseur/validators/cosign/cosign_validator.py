@@ -40,7 +40,9 @@ class CosignValidator(ValidatorInterface):
         self.trust_roots = trust_roots
         self.k8s_keychain = False if auth is None else auth.get("k8s_keychain", False)
         self.rekor_url = (
-            host if host is None or host.startswith(("https://", "http://")) else f"https://{host}"
+            host
+            if host is None or host.startswith(("https://", "http://"))
+            else f"https://{host}"
         )
 
     async def validate(
