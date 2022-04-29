@@ -1,7 +1,7 @@
 # configure Connaisseur deployment
 deployment:
   replicasCount: 3
-  image: securesystemsengineering/connaisseur:v2.6.0
+  image: xoph/connaisseur:v2.6.0-rc1
   imagePullPolicy: IfNotPresent
   # imagePullSecrets contains an optional list of Kubernetes Secrets, in Connaisseur namespace,
   # that are needed to access the registry containing Connaisseur image.
@@ -80,15 +80,16 @@ validators:
     approve: false
   # the `default` validator is used if no validator is specified in image policy
   - name: default
-    type: notaryv1  # or other supported validator (e.g. "cosign")
-    host: notary.docker.io # configure the notary server for notaryv1 or rekor url for cosign
+    type: cosign  # or other supported validator (e.g. "cosign")
+    host: rekor.sigstore.dev # configure the notary server for notaryv1 or rekor url for cosign
     trust_roots:
-    # # the `default` key is used if no key is specified in image policy
-    #- name: default
-    #  key: |  # enter your public key below
-    #    -----BEGIN PUBLIC KEY-----
-    #    <add your public key here>
-    #    -----END PUBLIC KEY-----
+     # the `default` key is used if no key is specified in image policy
+    - name: default
+      key: |  # enter your public key below
+        -----BEGIN PUBLIC KEY-----
+        MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqxgd/RqCdPnafQmlmX71eICGRBqu
+        USHEjAv3FZCROHLYts11xR6Peu8ZEvMXOR46L7+z84DRFK6gnTInbIGFmg==
+        -----END PUBLIC KEY-----
     #cert: |  # in case the trust data host is using a self-signed certificate
     #  -----BEGIN CERTIFICATE-----
     #  ...
@@ -126,6 +127,9 @@ validators:
 # is applied. specify if and how images should be validated by which validator via the validator name.
 policy:
   - pattern: "*:*"
+  - pattern: "docker.io/securesystemsengineering/testimage:*"
+  - pattern: "docker.io/xoph/connaisseur:*"
+    validator: allow
   - pattern: "docker.io/library/*:*"
     validator: dockerhub-basics
     with:
