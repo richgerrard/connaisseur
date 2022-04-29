@@ -335,7 +335,6 @@ class CosignValidator(ValidatorInterface):
         # Rekor support requires setting of COSIGN_EXPERIMENTAL
         if self.rekor_url is not None:
             env.update({"COSIGN_EXPERIMENTAL": "1"})
-            # env.update({"SIGSTORE_NO_CACHE": "1"})  # only store TUF root in memory to avoid file writing
             env.update({"TUF_ROOT": "/app/.sigstore"})
         return env
 
