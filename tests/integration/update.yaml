@@ -94,6 +94,8 @@ policy:
     required: ["alice", "charlie"]
 - pattern: docker.io/securesystemsengineering/testimage:rekor-*
   validator: rekor-cosign
+  with:
+    trust_root: "rekored-key"
 - pattern: "docker.io/securesystemsengineering/testimage:special_sig"
   validator: dockerhub-basics
   with:
