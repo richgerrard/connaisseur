@@ -70,6 +70,17 @@ static_cosigns = [
             {"name": "test3", "key": example_key2},
         ],
     },
+    {
+        "name": "cosign1",
+        "type": "cosign",
+        "host": "rekor.sigstore.dev",
+        "trust_roots": [
+            {
+                "name": "default",
+                "key": example_key,
+            }
+        ],
+    },
 ]
 
 digest1 = "c5327b291d702719a26c6cf8cc93f72e7902df46547106a9930feda2c002a4a7"
@@ -340,7 +351,7 @@ async def test_validate(
             fix.get_cosign_err_msg("wrong_key"),
             "testimage:v1",
             [],
-            pytest.raises(exc.ValidationError),
+            pytest.raises(exc.ValidationError, match=r".*signature of trust data.*"),
         ),
         (
             0,
@@ -389,6 +400,14 @@ async def test_validate(
             "testimage:v1",
             [],
             pytest.raises(exc.CosignError),
+        ),
+        (
+            1,
+            "",
+            fix.get_cosign_err_msg("notfound_in_tl"),
+            "testimage:v1",
+            [],
+            pytest.raises(exc.ValidationError, match=r".*transparency log.*"),
         ),
     ],
 )
@@ -538,6 +557,8 @@ def test_invoke_cosign(fake_process, image, process_input, k8s_keychain):
     )
     config = static_cosigns[0].copy()
     config["auth"] = {"k8s_keychain": k8s_keychain}
+    if host:
+        config["host"] = host
     val = co.CosignValidator(**config)
     returncode, stdout, stderr = val._CosignValidator__invoke_cosign(im, process_input)
     assert fake_process_calls in fake_process.calls
@@ -596,6 +617,10 @@ def test_invoke_cosign_timeout_expired(
 def test_get_envs(monkeypatch):
     env = co.CosignValidator(**static_cosigns[0])._CosignValidator__get_envs()
     assert env["DOCKER_CONFIG"] == "/app/connaisseur-config/cosign1/.docker/"
+    if COSIGN_EXPERIMENTAL:
+        assert env["COSIGN_EXPERIMENTAL"] == f"{COSIGN_EXPERIMENTAL}"
+    else:
+        assert "COSIGN_EXPERIMENTAL" not in env.keys()
 
 
 @pytest.mark.parametrize(
