@@ -93,7 +93,7 @@ kubectl run altsigned --image=docker.io/securesystemsengineering/testimage:co-si
 | `type` | | :heavy_check_mark: | `cosign`; the validator type must be set to `cosign`. |
 | `trust_roots[*].name` | | :heavy_check_mark: | See [basics](../basics.md#validators). |
 | `trust_roots[*].key` | | :heavy_check_mark: | See [basics](../basics.md#validators). ECDSA public key from `cosign.pub` file or [KMS URI](https://github.com/sigstore/cosign/blob/main/KMS.md). See additional notes [below](#kms-support). |
-| `host` | | | Not yet implemented. |
+| `host` | | | (EXPERIMENTAL) rekor url. |
 | `auth.` | | | Authentication credentials for private registries. See additional notes [below](#authentication). |
 | `auth.secret_name` | | | Name of a Kubernetes secret in Connaisseur namespace that contains [dockerconfigjson](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets) for registry authentication. See additional notes [below](#dockerconfigjson). |
 | `auth.k8s_keychain` | false | | When true, pass `--k8s-keychain` argument to `cosign verify` in order to use workload identities for authentication. See additional notes [below](#k8s_keychain). |
