@@ -136,12 +136,12 @@ test_cases:
     namespace: default
     expected_msg: Failed to find signature in transparency log.
     expected_result: null
-  - id: rcs-rekor
+  - id: rcstl
     txt: Testing signed cosign image WITH transparency log entry...
     type: deploy
     ref: securesystemsengineering/testimage:rekor-cosigned-tl
     namespace: default
-    expected_msg: pod/pod-rcs created
+    expected_msg: pod/pod-rcstl created
     expected_result: null
   ignore-namespace-val:
   - id: iuu
