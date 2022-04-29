@@ -503,7 +503,7 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
 
 
 @pytest.mark.parametrize(
-    "image, process_input, k8s_keychain",
+    "image, process_input, k8s_keychain, host",
     [
         (
             "testimage:v1",
@@ -517,7 +517,8 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
                     b"-----END PUBLIC KEY-----\n"
                 ),
             },
-            {"secret_name": "thesecret"},
+            False,
+            None,
         ),
         (
             "testimage:v1",
@@ -526,10 +527,20 @@ def test_validate_using_key(fake_process, image, key, process_input, exception):
                 "inline_tr": "k8s://connaisseur/test_key",
             },
             False,
+            None,
+        ),
+        (
+            "testimage:v1",
+            {
+                "option_kword": "--key",
+                "inline_tr": "k8s://connaisseur/test_key",
+            },
+            False,
+            "https://rekor.sigstore.dev",
         ),
     ],
 )
-def test_invoke_cosign(fake_process, image, process_input, k8s_keychain):
+def test_invoke_cosign(fake_process, image, process_input, k8s_keychain, host):
     def stdin_function(input):
         return {"stderr": input.decode(), "stdout": input}
 
@@ -547,6 +558,7 @@ def test_invoke_cosign(fake_process, image, process_input, k8s_keychain):
         process_input["option_kword"],
         process_input["inline_tr"],
         *(["--k8s-keychain"] if k8s_keychain else []),
+        *(["--rekor-url", host] if host else []),
         str(im),
     ]
     fake_process.register_subprocess(
@@ -614,8 +626,15 @@ def test_invoke_cosign_timeout_expired(
     assert "Cosign timed out." in str(err.value)
 
 
-def test_get_envs(monkeypatch):
-    env = co.CosignValidator(**static_cosigns[0])._CosignValidator__get_envs()
+@pytest.mark.parametrize(
+    "index, COSIGN_EXPERIMENTAL",
+    [
+        (0, 0),
+        (5, 1),
+    ],
+)
+def test_get_envs(monkeypatch, index, COSIGN_EXPERIMENTAL):
+    env = co.CosignValidator(**static_cosigns[index])._CosignValidator__get_envs()
     assert env["DOCKER_CONFIG"] == "/app/connaisseur-config/cosign1/.docker/"
     if COSIGN_EXPERIMENTAL:
         assert env["COSIGN_EXPERIMENTAL"] == f"{COSIGN_EXPERIMENTAL}"
