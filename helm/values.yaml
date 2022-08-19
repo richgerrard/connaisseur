@@ -142,9 +142,9 @@ policy:
 # interrupting operation.
 detectionMode: false
 
-# TODO: write description, choose proper naming
+# validation mode allows advanced configuration of image validation
 validationMode:
-  mutate: true
+  mutate: true  # mutate image references to signed digests ('true', default) or keep original reference ('false')
 
 # namespaced validation allows to restrict the namespaces that will be subject to Connaisseur verification.
 # when enabled, based on namespaced validation mode ('ignore' or 'validate')
