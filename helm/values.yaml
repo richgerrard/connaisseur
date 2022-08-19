@@ -143,7 +143,7 @@ policy:
 detectionMode: false
 
 # TODO: write description, choose proper naming
-mutationMode:
+validationMode:
   mutate: true
 
 # namespaced validation allows to restrict the namespaces that will be subject to Connaisseur verification.

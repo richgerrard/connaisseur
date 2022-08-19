@@ -247,11 +247,11 @@ async def test_admit(
 ):
     with exception:
         with aioresponses() as aio:
-            pytest.fa.MUTATION_MODE_MUTATE = mutate
+            pytest.fa.VALIDATION_MODE_MUTATE = mutate
             aio.get(re.compile(r".*"), callback=fix.async_callback, repeat=True)
             response = await pytest.fa.__admit(AdmissionRequest(adm_req_samples[index]))
             assert response == out
-    pytest.fa.MUTATION_MODE_MUTATE = True
+    pytest.fa.VALIDATION_MODE_MUTATE = True
 
 
 @pytest.mark.parametrize(

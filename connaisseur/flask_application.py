@@ -24,7 +24,7 @@ sends its response back.
 """
 CONFIG = Config()
 DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
-MUTATION_MODE_MUTATE = os.environ.get("MUTATION_MODE_MUTATE", "true") == "true"
+VALIDATION_MODE_MUTATE = os.environ.get("VALIDATION_MODE_MUTATE", "true") == "true"
 
 metrics = PrometheusMetrics(
     APP,
@@ -146,7 +146,7 @@ async def __admit(admission_request: AdmissionRequest):
         admission_request.uid,
         True,
         patch=[patch for patch in patches.result() if patch]
-        if MUTATION_MODE_MUTATE
+        if VALIDATION_MODE_MUTATE
         else None,
     )
 
