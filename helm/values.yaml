@@ -35,7 +35,11 @@ deployment:
                     - connaisseur
             topologyKey: kubernetes.io/hostname
           weight: 100
-  #annotations:  # uncomment when using Kubernetes prior v1.19
+  annotations:  # uncomment when using Kubernetes prior v1.19
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "5001"
+    prometheus.io/scheme: "http"
   #  seccomp.security.alpha.kubernetes.io/pod: runtime/default  # uncomment when using Kubernetes prior v1.19
   securityContext:
     allowPrivilegeEscalation: false

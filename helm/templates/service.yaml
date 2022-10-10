@@ -10,6 +10,9 @@ spec:
   ports:
     - port: {{ .Values.service.port }}
       targetPort: 5000
+      name: https
+    - port: 80
+      targetPort: 5001
       name: http
   selector:
     app.kubernetes.io/name: {{ include "helm.name" . }}

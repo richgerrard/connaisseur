@@ -25,14 +25,15 @@ sends its response back.
 CONFIG = Config()
 DETECTION_MODE = os.environ.get("DETECTION_MODE", "0") == "1"
 
+"""
+Provides metrics for the Flask application
+"""
 metrics = PrometheusMetrics(
     APP,
     defaults_prefix=NO_PREFIX,
     buckets=(0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 10.0, 15.0, 20, 30.0, float("inf")),
 )
-"""
-Provides metrics for the Flask application
-"""
+metrics.start_http_server(port=5001)
 
 
 @APP.errorhandler(AlertSendingError)
